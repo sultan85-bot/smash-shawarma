@@ -85,6 +85,23 @@
   h1 .price { color: var(--orange); white-space: nowrap; }
   .intro p { margin: 0; color: var(--brown-soft); font-size: 16px; }
 
+  .rating {
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--paper);
+    border: 1.5px solid var(--line);
+    color: var(--brown);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .rating .stars { color: #E9A100; letter-spacing: 1px; }
+
   /* Buttons */
   .actions { display: flex; flex-direction: column; gap: 10px; }
   .btn {
@@ -165,14 +182,14 @@
     border-radius: var(--radius);
     overflow: hidden;
   }
-  .info a {
+  .info a, .info .row {
     display: flex;
     align-items: center;
     gap: 14px;
     padding: 15px 18px;
     text-decoration: none;
   }
-  .info a + a { border-top: 1px solid var(--line); }
+  .info > * + * { border-top: 1px solid var(--line); }
   .info a:hover { background: #FFF4DB; }
   .info svg { width: 22px; height: 22px; flex: none; color: var(--orange); }
   .info .label { display: block; font-size: 13px; color: var(--brown-soft); line-height: 1.4; }
@@ -230,6 +247,10 @@
   <section class="intro">
     <h1>شاورما كلاسيكي بـ <span class="price">3.75 ريال</span></h1>
     <p>خفيفة في الإحساس، قوية في الطعم. شاورما دجاج على الصاج.</p>
+    <a class="rating" href="https://www.google.com/maps?cid=8903038830442712386" data-track="directions" data-place="rating">
+      <span class="stars" aria-hidden="true">★★★★★</span>
+      <span>5.0 من 27 تقييماً على قوقل</span>
+    </a>
   </section>
 
   <div class="actions" id="main-actions">
@@ -252,8 +273,6 @@
 
   <!--
     أماكن جاهزة للإضافة لاحقاً (انسخ صف <a> داخل .info وعدّل النص):
-    - أوقات العمل
-    - العنوان المكتوب (الحي والشارع)
     - مدة العرض وشروطه
     - واتساب: href="https://wa.me/9665XXXXXXXX"
   -->
@@ -261,9 +280,13 @@
   <div class="info">
     <a href="https://www.google.com/maps?cid=8903038830442712386" data-track="directions" data-place="info-row">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"></path><circle cx="12" cy="10" r="2.6"></circle></svg>
-      <span><span class="label">الموقع</span><span class="value">افتح موقع سماش شاورما في خرائط قوقل</span></span>
+      <span><span class="label">الموقع · افتح في خرائط قوقل</span><span class="value">حي الخليج، الرياض</span></span>
       <span class="go" aria-hidden="true">‹</span>
     </a>
+    <div class="row">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+      <span><span class="label">أوقات العمل</span><span class="value">يومياً من 4 مساءً إلى 1:30 بعد منتصف الليل</span></span>
+    </div>
     <a href="tel:+966500174112" data-track="call" data-place="info-row">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16.5v3a2 2 0 0 1-2.2 2A19 19 0 0 1 2.5 5.200 2 2 0 0 1 4.500 3h3a2 2 0 0 1 2 1.700c.1 1 .4 1.900.700 2.800a2 2 0 0 1-.5 2.100L8.500 10.800a16 16 0 0 0 4.700 4.700l1.200-1.200a2 2 0 0 1 2.100-.5c.9.300 1.800.600 2.800.700a2 2 0 0 1 1.700 2z"></path></svg>
       <span><span class="label">الهاتف</span><span class="value num">0500174112</span></span>
