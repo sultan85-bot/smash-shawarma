@@ -12,6 +12,15 @@
 <!-- بعد ربط الدومين: ضع الرابط الكامل للصورة هنا، مثال https://your-domain.com/offer.webp -->
 <meta property="og:image" content="offer.webp">
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18570066043"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-18570066043');
+</script>
+
 <link rel="preload" as="image" href="offer.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -274,8 +283,8 @@
    معرّفها فارغاً لا يُحمَّل كودها إطلاقاً.
    ===================================================================== */
 var TRACKING = {
-  googleAdsId: "",               // مثال: "AW-123456789"
-  googleAdsDirectionsLabel: "",  // تسمية تحويل "الاتجاهات" من قوقل ادز، مثال: "AbCdEfGhIjK"
+  googleAdsId: "AW-18570066043", // مثبّت أيضاً في <head> أعلى الصفحة
+  googleAdsDirectionsLabel: "3MYeCOnvirkdEPvw8pZF", // تحويل الضغط على "الاتجاهات"
   googleAdsCallLabel: "",        // تسمية تحويل "الاتصال" (اختياري)
   ga4Id: "",                     // مثال: "G-XXXXXXXXXX" (اختياري)
   metaPixelId: "",               // بكسل ميتا (انستقرام)، مثال: "123456789012345"
@@ -288,7 +297,10 @@ var TRACKING = {
 
   /* Google Ads + GA4 */
   var gId = T.googleAdsId || T.ga4Id;
-  if (gId) {
+  if (window.gtag) {
+    /* الوسم مثبّت في <head>؛ نضيف GA4 فقط إن وُجد */
+    if (T.ga4Id) gtag("config", T.ga4Id);
+  } else if (gId) {
     var g = document.createElement("script");
     g.async = true;
     g.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(gId);
@@ -344,22 +356,41 @@ var TRACKING = {
   }
 
   /* تسجيل الضغط على "الاتجاهات" و"الاتصال" كتحويل في كل منصة */
-  function track(kind, place) {
+  function track(kind, place, done) {
+    var sent = false;
     try {
       if (window.gtag) {
         gtag("event", kind === "directions" ? "get_directions" : "click_to_call", { button_place: place });
         var label = kind === "directions" ? T.googleAdsDirectionsLabel : T.googleAdsCallLabel;
-        if (T.googleAdsId && label) gtag("event", "conversion", { send_to: T.googleAdsId + "/" + label });
+        if (T.googleAdsId && label) {
+          var params = { send_to: T.googleAdsId + "/" + label, value: 1.0, currency: "SAR" };
+          if (done) params.event_callback = done;
+          gtag("event", "conversion", params);
+          sent = true;
+        }
       }
       if (window.fbq) fbq("track", kind === "directions" ? "FindLocation" : "Contact");
       if (window.ttq) ttq.track(kind === "directions" ? "ClickButton" : "Contact", { content_name: kind });
       if (window.snaptr) snaptr("track", kind === "directions" ? "CUSTOM_EVENT_1" : "CUSTOM_EVENT_2");
     } catch (err) { /* التتبع لا يمنع العميل من الوصول */ }
+    return sent;
   }
 
   document.addEventListener("click", function (ev) {
     var a = ev.target.closest ? ev.target.closest("[data-track]") : null;
-    if (a) track(a.getAttribute("data-track"), a.getAttribute("data-place"));
+    if (!a) return;
+    var kind = a.getAttribute("data-track"), place = a.getAttribute("data-place");
+    var href = a.getAttribute("href") || "";
+    var plain = ev.button === 0 && !ev.metaKey && !ev.ctrlKey && !ev.shiftKey && !ev.altKey;
+    if (kind === "directions" && plain && href.indexOf("http") === 0) {
+      /* ننتظر تسجيل التحويل ثم نفتح الخريطة؛ وبحد أقصى 0.7 ثانية حتى لا يتأخر العميل */
+      var gone = false;
+      var go = function () { if (!gone) { gone = true; window.location.href = href; } };
+      var sent = track(kind, place, go);
+      if (sent) { ev.preventDefault(); setTimeout(go, 700); }
+    } else {
+      track(kind, place);
+    }
   });
 
   /* الشريط السفلي يظهر عند اختفاء الأزرار الرئيسية من الشاشة */
